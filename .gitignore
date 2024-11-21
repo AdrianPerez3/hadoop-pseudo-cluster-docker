@@ -1,0 +1,25 @@
+# Compiled source files
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+
+# IDE specific files
+.idea/
+*.iml
+*.iws
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+node_modules/
+target/
+out/
+
+# Docker files
+*.tar

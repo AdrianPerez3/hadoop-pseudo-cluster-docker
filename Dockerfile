@@ -2,7 +2,7 @@
 FROM openjdk:11-jdk
 
 # Set environment variables
-ENV HADOOP_VERSION=3.4.1
+ENV HADOOP_VERSION=3.3.6
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV JAVA_HOME=/usr/local/openjdk-11
 ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
@@ -27,10 +27,10 @@ RUN mkdir -p /home/hadoop/.ssh && \
     chmod 600 /home/hadoop/.ssh/authorized_keys
 
 # Install Hadoop
-COPY hadoop-3.4.1.tar.gz /tmp/
-RUN tar -xzvf /tmp/hadoop-3.4.1.tar.gz -C /usr/local/ && \
-    mv /usr/local/hadoop-3.4.1 $HADOOP_HOME && \
-    rm /tmp/hadoop-3.4.1.tar.gz && \
+COPY hadoop-3.3.6.tar.gz /tmp/
+RUN tar -xzvf /tmp/hadoop-3.3.6.tar.gz -C /usr/local/ && \
+    mv /usr/local/hadoop-3.3.6 $HADOOP_HOME && \
+    rm /tmp/hadoop-3.3.6.tar.gz && \
     chown -R hadoop:hadoop $HADOOP_HOME
 
 # Configure Hadoop environment variables
@@ -40,14 +40,18 @@ RUN echo "export JAVA_HOME=/usr/local/openjdk-11" >> $HADOOP_HOME/etc/hadoop/had
 COPY config/* $HADOOP_HOME/etc/hadoop/
 RUN chown -R hadoop:hadoop $HADOOP_HOME/etc/hadoop/
 
+#crear namenode y datanode
+RUN mkdir -p /datos/namenode/current && \
+    chown -R hadoop:hadoop /datos
+
 # Switch to hadoop user
 USER hadoop
 
 # Format HDFS
-RUN $HADOOP_HOME/bin/hdfs namenode -format
+RUN $HADOOP_HOME/bin/hdfs namenode -format -force
 
 # Expose ports
-EXPOSE 9870 8088 9000 8042 22
+EXPOSE 9870 8088 9000 8042 22 9864
 
 # Switch back to root to copy the start script
 USER root

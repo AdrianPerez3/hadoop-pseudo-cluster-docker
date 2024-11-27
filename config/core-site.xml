@@ -4,4 +4,8 @@
     <name>fs.defaultFS</name>
     <value>hdfs://localhost:9000</value>
   </property>
+  <property>
+    <name>hadoop.http.staticuser.user</name>
+    <value>hadoop</value>
+  </property>
 </configuration>

@@ -60,7 +60,7 @@ hadoop-pseudo-docker/
 
 - **config/**: Directorio que contiene los archivos de configuración de Hadoop.
 - **Dockerfile**: Archivo de construcción de la imagen Docker.
-- **hadoop-3.3.5.tar.gz**: Archivo comprimido de Hadoop (debe descargarse previamente).
+- **hadoop-3.4.1.tar.gz**: Archivo comprimido de Hadoop (debe descargarse previamente).
 - **start-hadoop.sh**: Script para iniciar los servicios dentro del contenedor.
 
 ---
@@ -84,9 +84,17 @@ Configura el sistema de archivos predeterminado.
 ```xml
 <?xml version="1.0"?>
 <configuration>
-    <property>
-        <name>fs.defaultFS</name>
-        <value>hdfs://localhost:9000</value>
+    <property><?xml version="1.0"?>
+       <configuration>
+          <property>
+             <name>fs.defaultFS</name>
+             <value>hdfs://localhost:9000</value>
+          </property>
+          <property>
+             <name>hadoop.http.staticuser.user</name>
+             <value>hadoop</value>
+          </property>
+       </configuration>
     </property>
 </configuration>
 ```
@@ -97,11 +105,21 @@ Establece la replicación de datos.
 
 ```xml
 <?xml version="1.0"?>
-<configuration>
-    <property>
-        <name>dfs.replication</name>
-        <value>1</value>
-    </property>
+<configuration><?xml version="1.0"?>
+   <configuration>
+      <property>
+         <name>dfs.replication</name>
+         <value>1</value>
+      </property>
+      <property>
+         <name>dfs.namenode.name.dir</name>
+         <value>/datos/namenode</value>
+      </property>
+      <property>
+         <name>dfs.datanode.data.dir</name>
+         <value>/datos/datanode</value>
+      </property>
+   </configuration>
 </configuration>
 ```
 
@@ -169,10 +187,10 @@ RUN mkdir -p /home/hadoop/.ssh && \
     chmod 600 /home/hadoop/.ssh/authorized_keys
 
 # Install Hadoop
-COPY hadoop-3.4.1.tar.gz /tmp/
-RUN tar -xzvf /tmp/hadoop-3.4.1.tar.gz -C /usr/local/ && \
-    mv /usr/local/hadoop-3.4.1 $HADOOP_HOME && \
-    rm /tmp/hadoop-3.4.1.tar.gz && \
+COPY hadoop-${HADOOP_VERSION}.tar.gz /tmp/
+RUN tar -xzvf /tmp/hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local/ && \
+    mv /usr/local/hadoop-${HADOOP_VERSION} $HADOOP_HOME && \
+    rm /tmp/hadoop-${HADOOP_VERSION}.tar.gz && \
     chown -R hadoop:hadoop $HADOOP_HOME
 
 # Configure Hadoop environment variables
@@ -182,14 +200,18 @@ RUN echo "export JAVA_HOME=/usr/local/openjdk-11" >> $HADOOP_HOME/etc/hadoop/had
 COPY config/* $HADOOP_HOME/etc/hadoop/
 RUN chown -R hadoop:hadoop $HADOOP_HOME/etc/hadoop/
 
+#crear namenode y datanode
+RUN mkdir -p /datos/namenode/current && \
+    chown -R hadoop:hadoop /datos
+
 # Switch to hadoop user
 USER hadoop
 
 # Format HDFS
-RUN $HADOOP_HOME/bin/hdfs namenode -format
+RUN $HADOOP_HOME/bin/hdfs namenode -format -force
 
 # Expose ports
-EXPOSE 9870 8088 9000 8042 22
+EXPOSE 9870 8088 9000 8042 22 9864
 
 # Switch back to root to copy the start script
 USER root
@@ -256,6 +278,8 @@ docker run -it --name hadoop-container \
     -p 8088:8088 \
     -p 9000:9000 \
     -p 8042:8042 \
+    -p 22:22 \
+    -p 9864:9864 \
     hadoop-pseudo
 ```
 

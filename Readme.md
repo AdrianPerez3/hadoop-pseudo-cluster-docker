@@ -287,6 +287,17 @@ docker run -it --name hadoop-container \
 - `--name hadoop-container`: Asigna el nombre `hadoop-container` al contenedor.
 - `-p`: Mapea puertos para permitir el acceso a las interfaces web.
 
+### **Configuración Crítica de /etc/hosts**
+
+Para que Hadoop funcione correctamente, es **esencial** agregar una entrada en el archivo `/etc/hosts` de tu máquina anfitriona para mapear `localhost` a `hadoop-container-id`. Esto se puede hacer añadiendo la siguiente línea:
+
+```plaintext
+127.0.0.1   hadoop-container-id (sería algo así -> 509a58aebacd)
+```
+
+
+
+
 ---
 
 ## **8. Verificación de la Configuración**

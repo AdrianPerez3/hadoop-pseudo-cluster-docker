@@ -2,7 +2,7 @@
 FROM openjdk:11-jdk
 
 # Set environment variables
-ENV HADOOP_VERSION=3.3.6
+ENV HADOOP_VERSION=3.4.1
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV JAVA_HOME=/usr/local/openjdk-11
 ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
@@ -27,10 +27,10 @@ RUN mkdir -p /home/hadoop/.ssh && \
     chmod 600 /home/hadoop/.ssh/authorized_keys
 
 # Install Hadoop
-COPY hadoop-3.3.6.tar.gz /tmp/
-RUN tar -xzvf /tmp/hadoop-3.3.6.tar.gz -C /usr/local/ && \
-    mv /usr/local/hadoop-3.3.6 $HADOOP_HOME && \
-    rm /tmp/hadoop-3.3.6.tar.gz && \
+COPY hadoop-${HADOOP_VERSION}.tar.gz /tmp/
+RUN tar -xzvf /tmp/hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local/ && \
+    mv /usr/local/hadoop-${HADOOP_VERSION} $HADOOP_HOME && \
+    rm /tmp/hadoop-${HADOOP_VERSION}.tar.gz && \
     chown -R hadoop:hadoop $HADOOP_HOME
 
 # Configure Hadoop environment variables

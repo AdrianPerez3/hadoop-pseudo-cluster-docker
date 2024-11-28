@@ -24,7 +24,18 @@ RUN apt-get update && \
         iputils-ping \
         telnet \
         zip \
-        unzip && \
+        unzip \
+        gzip \
+        bzip2 \
+        xz-utils \
+        p7zip-full \
+        unrar-free \
+        lzop \
+        lzma \
+        tar \
+        build-essential \
+        python3 \
+        python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
 # Create hadoop user and group

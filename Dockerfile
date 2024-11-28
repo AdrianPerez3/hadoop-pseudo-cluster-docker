@@ -9,7 +9,22 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 
 # Install necessary packages
 RUN apt-get update && \
-    apt-get install -y openssh-server wget rsync sudo && \
+    apt-get install -y \
+        openssh-server \
+        wget \
+        rsync \
+        sudo \
+        vim \
+        nano \
+        emacs \
+        less \
+        net-tools \
+        netcat \
+        curl \
+        iputils-ping \
+        telnet \
+        zip \
+        unzip && \
     rm -rf /var/lib/apt/lists/*
 
 # Create hadoop user and group
@@ -28,13 +43,13 @@ RUN mkdir -p /home/hadoop/.ssh && \
 
 # Install Hadoop
 COPY hadoop-${HADOOP_VERSION}.tar.gz /tmp/
-RUN tar -xzvf /tmp/hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local/ && \
+RUN tar -xzf /tmp/hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local/ && \
     mv /usr/local/hadoop-${HADOOP_VERSION} $HADOOP_HOME && \
     rm /tmp/hadoop-${HADOOP_VERSION}.tar.gz && \
     chown -R hadoop:hadoop $HADOOP_HOME
 
 # Configure Hadoop environment variables
-RUN echo "export JAVA_HOME=/usr/local/openjdk-11" >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=${JAVA_HOME}" >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
 # Copy configuration files
 COPY config/* $HADOOP_HOME/etc/hadoop/

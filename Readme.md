@@ -306,6 +306,7 @@ docker run -it --name hadoop-container \
     -p 8042:8042 \
     -p 22:22 \
     -p 9864:9864 \
+    -v "$(pwd)":/home/hadoop/project \
     hadoop-pseudo
 ```
 
